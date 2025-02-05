@@ -152,9 +152,61 @@ const telajogo= {
         chao.atualiza();
         flappyBird.desenha();
         flappyBird.atualiza();
+        canos.desenha();
     },
     click(){
         flappyBird.pula();
+    }
+}
+
+const canos = {
+    largura: 52,
+    altura: 400, 
+    ceu : {
+        spriteX: 52,
+        spriteY: 169,
+        x: 120,
+        y: -150
+    },
+    chao: {
+        spriteX: 0,
+        spriteY: 169
+    },
+    pares: [],
+    desenha() {
+        const espacamentoentrecanos = 80;
+        for (i=0;i<canos.pares.length;i++){
+            canos.ceu.x = canos.pares[i].x;
+            canos.ceu.y = canos.pares[i].y;
+        }
+        contexto.drawImage(
+            sprites,
+            canos.ceu.spriteX, canos.ceu.spriteY, canos.largura, 
+            canos.altura, canos.ceu.x, canos.ceu.y, canos.largura,
+            canos.altura
+        )
+        const canochaoX = canos.ceu.x;
+        const canoChaoY = canos.altura + espacamentoentrecanos + canos.ceu.y;
+        contexto.drawImage(
+            sprites,
+            canos.chao.spriteX, canos.chao.spriteY, canos.largura, 
+            canos.altura, canochaoX, canoChaoY, canos.largura,
+            canos.altura
+        )
+    },
+    atualiza() {
+        for(i=o;i<canos.pares.length;i++){
+            const par = canos.pares[i];
+            par.x = par.x - 2;
+        } 
+        const passou100frames = (animation_frame % 100 === 0);
+        if (passou100frames) {
+            const novopar = {
+                x: canvas.width,
+                y: -150,
+            }
+            canos.pares.push(novopar)
+        } 
     }
 }
 
