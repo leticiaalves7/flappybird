@@ -1,3 +1,4 @@
+
 const sprites = new Image();
 sprites.src = './sprites.png';
 const canvas = document.querySelector('#game-canvas');
@@ -148,11 +149,13 @@ const telajogo= {
     desenha(){
         fundo.desenha();
         fundo.atualiza();
+        canos.desenha();
+        canos.atualiza();
         chao.desenha();
         chao.atualiza();
         flappyBird.desenha();
         flappyBird.atualiza();
-        canos.desenha();
+       
     },
     click(){
         flappyBird.pula();
@@ -173,37 +176,48 @@ const canos = {
         spriteY: 169
     },
     pares: [],
+    espacamentoentrecanos: 120,
     desenha() {
-        const espacamentoentrecanos = 80;
         for (i=0;i<canos.pares.length;i++){
             canos.ceu.x = canos.pares[i].x;
             canos.ceu.y = canos.pares[i].y;
+            contexto.drawImage(
+                sprites,
+                canos.ceu.spriteX, canos.ceu.spriteY,
+                canos.largura, canos.altura,
+                canos.ceu.x, canos.ceu.y,
+                canos.largura, canos.altura,
+            )
+            const canoChaoX = canos.ceu.x;
+            const canoChaoY = canos.altura + canos.espacamentoentrecanos + canos.ceu.y;
+            contexto.drawImage(
+                sprites,
+                canos.chao.spriteX, canos.chao.spriteY, canos.largura, 
+                canos.altura, canoChaoX, canoChaoY, canos.largura,
+                canos.altura
+            )
         }
-        contexto.drawImage(
-            sprites,
-            canos.ceu.spriteX, canos.ceu.spriteY, canos.largura, 
-            canos.altura, canos.ceu.x, canos.ceu.y, canos.largura,
-            canos.altura
-        )
-        const canochaoX = canos.ceu.x;
-        const canoChaoY = canos.altura + espacamentoentrecanos + canos.ceu.y;
-        contexto.drawImage(
-            sprites,
-            canos.chao.spriteX, canos.chao.spriteY, canos.largura, 
-            canos.altura, canochaoX, canoChaoY, canos.largura,
-            canos.altura
-        )
     },
     atualiza() {
-        for(i=o;i<canos.pares.length;i++){
+        for(i=0;i<canos.pares.length;i++){
             const par = canos.pares[i];
-            par.x = par.x - 2;
+            par.x -= 2;
+
+            if (par.x + canos.largura <= 0){
+                canos.pares.shift();
+            }
+
+            if (fazcolisaoobstaculo(par)){
+                sompunch.play();
+                telaativa = telainicio;
+                return;
+            }
         } 
         const passou100frames = (animation_frame % 100 === 0);
         if (passou100frames) {
             const novopar = {
                 x: canvas.width,
-                y: -150,
+                y: -150 * (Math.random() + 1),
             }
             canos.pares.push(novopar)
         } 
@@ -212,6 +226,24 @@ const canos = {
 
 var telaativa = telainicio;
 
+function fazcolisaoobstaculo(par){
+        if(flappyBird.x >= par.x){
+            const alturacabecaflappy = flappyBird.y;
+            const alturapeflappy = flappyBird.y + flappyBird.altura;
+            const bocacanoceuy = par.y + canos.altura;
+            const bocacanochaoy = par.y + canos.altura + canos.espacamentoentrecanos;
+            if (alturacabecaflappy <= bocacanoceuy){
+                canos.pares =[];
+                return true;
+            }
+            if (alturapeflappy >= bocacanochaoy){
+                canos.pares =[];
+                return true;
+            }
+        }
+        return false;
+}
+
 function mudatelaativa(){
     telaativa.click();
 }
@@ -219,6 +251,7 @@ function mudatelaativa(){
 function fazcolisao(){
     const limite = chao.y;
     if (flappyBird.y + flappyBird.altura > limite){
+        canos.pares =[];
         return true;
     }
 
