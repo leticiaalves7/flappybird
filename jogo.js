@@ -9,6 +9,16 @@ let animation_frame = 0;
 
 const jogo = {};
 
+function inicializa(){
+    jogo.flappyBird = criaflappybird();
+    jogo.fundo = criafundo();
+    jogo.chao = criachao();
+    jogo.canos = criacanos();
+    jogo.placar = criaplacar();
+
+}
+
+
 function criaflappybird(){
     const flappyBird = {
         spriteX: 0,
@@ -60,6 +70,7 @@ function criaflappybird(){
         }
         },
     }
+    return flappyBird
 }
 
 function criachao(){
@@ -90,6 +101,7 @@ function criachao(){
              
          }
     }
+    return chao
 }
 
 function criafundo(){
@@ -121,6 +133,7 @@ function criafundo(){
         }
     }
     
+    return fundo
 }
 
 const inicio = {
@@ -234,6 +247,8 @@ function criacanos(){
             } 
         }
     }
+
+    return canos
 }
 function criaplacar(){
     const placar = {
@@ -293,17 +308,17 @@ function inicializa(){
 }
 
 function fazcolisaoobstaculo(par){
-        if(flappyBird.x >= par.x){
-            const alturacabecaflappy = flappyBird.y;
-            const alturapeflappy = flappyBird.y + flappyBird.altura;
-            const bocacanoceuy = par.y + canos.altura;
-            const bocacanochaoy = par.y + canos.altura + canos.espacamentoentrecanos;
+        if(jogo.flappyBird.x >= par.x){
+            const alturacabecaflappy = jogo.flappyBird.y;
+            const alturapeflappy = jogo.flappyBird.y + jogo.flappyBird.altura;
+            const bocacanoceuy = par.y + jogo.canos.altura;
+            const bocacanochaoy = par.y + jogo.canos.altura + jogo.canos.espacamentoentrecanos;
             if (alturacabecaflappy <= bocacanoceuy){
-                canos.pares =[];
+                jogo.canos.pares =[];
                 return true;
             }
             if (alturapeflappy >= bocacanochaoy){
-                canos.pares =[];
+                jogo.canos.pares =[];
                 return true;
             }
         }
@@ -315,9 +330,9 @@ function mudatelaativa(){
 }
 
 function fazcolisao(){
-    const limite = chao.y;
-    if (flappyBird.y + flappyBird.altura > limite){
-        canos.pares =[];
+    const limite = jogo.chao.y;
+    if (jogo.flappyBird.y + jogo.flappyBird.altura > limite){
+        jogo.canos.pares =[];
         return true;
     }
 
